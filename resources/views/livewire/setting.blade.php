@@ -55,8 +55,10 @@
                         </template>
 
                         <!-- Submit Button -->
-                        <button type="submit" :disabled="loading"
-                            class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg px-4 py-2">Save</button>
+                        <div class="flex gap-x-2">
+                            <x-button-form type="" color="bg-blue-600 hover:bg-blue-700" name="Save" />
+                            <x-button-form type="submit" color="bg-red-600 hover:bg-red-700" name="Reset" />
+                        </div>
                     </form>
                 </div>
             </div>
