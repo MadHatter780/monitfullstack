@@ -2,15 +2,10 @@
     <div class="w-[60%] flex bg-[#282842] bg-opacity-50 h-[70%] rounded-lg ">
         <div class="w-full h-full relative">
             <div class="w-full h-full bg-black absolute bg-opacity-70">
-
             </div>
-            <img class="h-full w-full"
-                src="https://api.deepai.org/job-view-file/bf235520-71e7-4353-a443-dc124b2f0c67/outputs/output.jpg?art-image=true"
-                alt="">
+            <img class="h-full w-full" src="{{ asset('img/output.jpg') }}" alt="">
         </div>
         <div class="w-full">
-
-
             <div class="border-y border-r border-slate-500 rounded-x-lg rounded-r-lg w-full h-full">
                 <div class="flex flex-col justify-center  items-center h-full">
                     <div class="w-full flex flex-col justify-center h-full items-center">
@@ -20,8 +15,16 @@
                             </div>
                             Monitoring
                         </div>
+                        <div class="w-full flex flex-col gap-y-4 justify-center">
+                            <div class="w-full flex justify-center">
+                                <div class="flex  justify-center w-full">
+                                    <x-input-login name="Username" placeholder="bejokun@gmail.com...." type="text" />
 
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>

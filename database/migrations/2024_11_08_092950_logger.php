@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string("name");
             $table->string("surname");
             $table->bigInteger("value");
+            $table->integer("id_location");
+            $table->integer("id_type");
             $table->dateTime("timestamp");
             $table->timestamps();
         });

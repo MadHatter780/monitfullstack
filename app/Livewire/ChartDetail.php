@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Asantibanez\LivewireCharts\LivewireCharts;
 use Asantibanez\LivewireCharts\Models\ColumnChartModel;
-
+use Livewire\Attributes\Title;
 class ChartDetail extends Component
 {
     public $chartData,
@@ -257,6 +257,7 @@ class ChartDetail extends Component
             ]);
         }
     }
+    #[Title('Chart Detail')]  // Mengatur title halaman
 
 
     public function render()

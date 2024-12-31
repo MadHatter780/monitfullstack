@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string("parent");
             $table->string("name");
-            $table->string("value");
+            $table->bigInteger("value");
             $table->timestamps();
         });
     }

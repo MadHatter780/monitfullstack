@@ -1,11 +1,10 @@
 <div class="w-full px-4 ">
-    <div class="border-b">
+    <div class="border-b w-full">
         <x-sub-nav>
             <div class="flex mb-1">
                 <div class="font-semibold">
                     {{ $slot }}
                 </div>
-
             </div>
         </x-sub-nav>
     </div>

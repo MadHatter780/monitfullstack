@@ -1,11 +1,11 @@
 <div class="p-4">
-    <x-title name="Realtime Dashboard" logo="bi bi-clock" color="from-[#7ce7b0] to-[#07e916] from-10% " />
+    <x-title name="Chart Detail" logo="bi bi-clock" color="from-[#7ce7b0] to-[#07e916] from-10% " />
     <x-sub-nav>
         <div>
             <i class="bi bi-clock"></i>
         </div>
         <div class="text-white underline ">
-            Realtime Dashboard
+            Chart Detail
         </div>
         <div>
             /

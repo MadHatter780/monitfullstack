@@ -1,4 +1,3 @@
-<div class="text-base tracking-[1px] uderline mt-4 flex gap-x-2 text-white px-2">
+<div class="2xl:text-base text-sm tracking-[1px] uderline 2xl:mt-4 mt-2 flex gap-x-2 text-white ">
     {{ $slot }}
-    <!-- Knowing is not enough; we must apply. Being willing is not enough; we must do. - Leonardo da Vinci -->
 </div>

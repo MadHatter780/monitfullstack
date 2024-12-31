@@ -1,6 +1,5 @@
-<div class="w-full p-2">
+<div class="w-full p-4">
     <div class="mb-2">
-
         <x-title name="History Chart" logo="bi bi-clock" color="from-[#7ce7b0] to-[#07e916] from-10% " />
         <x-sub-nav>
             <div>

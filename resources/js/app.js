@@ -20,6 +20,9 @@ document.addEventListener("alpine:init", () => {
         v_bn: "...",
         v_cn: "...",
 
+        prev: "asasa",
+        increase: "",
+
         mac: "...",
         historyVoltage: [],
         maxHistory: 8,
@@ -37,9 +40,9 @@ document.addEventListener("alpine:init", () => {
         lastDate: new Date().getTime(),
 
         init() {
+            this.initChart(); // Initialize chart
             // Setup MQTT client
             this.client = mqtt.connect("wss://broker.emqx.io:8084/mqtt");
-
             this.client.on("connect", () => {
                 console.log("Connected to MQTT broker");
                 this.client.subscribe("spBv1.0/power_meter", (err) => {
@@ -57,7 +60,7 @@ document.addEventListener("alpine:init", () => {
                         this.p_a = power.A;
                         this.p_b = power.B;
                         this.p_c = power.C;
-                        this.p_t = power.T;
+                        this.p_t = (power.T / 10 ** 6).toFixed(2);
 
                         let current = msg.data.Current || 0;
                         this.c_a = current.A;
@@ -78,18 +81,108 @@ document.addEventListener("alpine:init", () => {
                     this.updateTableC(msg);
                     this.updateTableP(msg);
                     this.formatTimestamp(msg.timestamp);
-                    console.log("as");
+
+                    // Update the chart data when new data is received
+                    this.updateChart();
                 } catch (e) {
                     console.error("Error parsing MQTT message:", e);
                 }
             });
         },
 
-        destroy() {
-            if (this.client) {
-                this.client.end();
-                console.log("MQTT client disconnected");
+        // Initialize the bar chart using ApexCharts
+        initChart() {
+            if (!this.chart) {
+                const categories = ["R", "S", "T"]; // Label baru
+                const series = [
+                    {
+                        name: "Random Data",
+                        data: [10, 20, 30], // Initial random data
+                    },
+                ];
+                const chartElement = this.$refs.chartContainer;
+
+                this.chart = new ApexCharts(chartElement, {
+                    chart: {
+                        type: "bar",
+                        height: 400,
+                        width: "100%",
+                    },
+                    series: series,
+                    colors: ["#ff5733"],
+                    xaxis: {
+                        categories: categories, // Pindahkan categories ke xaxis
+                        title: {
+                            text: "Current (A)",
+                            style: {
+                                fontSize: "20px",
+                                color: "#fff",
+                            },
+                        },
+                        labels: {
+                            style: {
+                                colors: "#fff",
+                            },
+                        },
+                    },
+                    yaxis: {
+                        title: {
+                            text: "Phase",
+                            style: {
+                                fontSize: "20px",
+                                color: "#fff",
+                            },
+                        },
+                        labels: {
+                            style: {
+                                colors: "#fff",
+                            },
+                        },
+                    },
+                    plotOptions: {
+                        bar: {
+                            horizontal: true,
+                            dataLabels: {
+                                position: "top",
+                            },
+                        },
+                    },
+                    dataLabels: {
+                        enabled: true,
+                        offsetX: 30,
+                        offsetY: 0,
+                        style: {
+                            colors: ["#fff"],
+                            fontSize: "24px",
+                            fontWeight: "bold",
+                        },
+                    },
+                });
+
+                this.chart.render();
             }
+        },
+
+        // Update chart data
+        updateChart() {
+            if (this.chart) {
+                // Example of updating the chart data dynamically from the new MQTT data
+                const updatedData = [this.c_a, this.c_b, this.c_c]; // Use your actual data here
+                this.chart.updateSeries([
+                    {
+                        name: "Value",
+                        data: updatedData,
+                    },
+                ]);
+            }
+        },
+
+        formatTimestamp() {
+            const date = new Date();
+            const hours = String(date.getHours()).padStart(2, "0"); // Mengubah jam menjadi dua digit
+            const minutes = String(date.getMinutes()).padStart(2, "0"); // Mengubah menit menjadi dua digit
+            const seconds = String(date.getSeconds()).padStart(2, "0"); // Mengubah detik menjadi dua digit
+            return `${hours}:${minutes}:${seconds}`; // Menggabungkan jam, menit, dan detik dalam format HH:mm:ss
         },
 
         updateTable(msg) {
@@ -100,14 +193,13 @@ document.addEventListener("alpine:init", () => {
                 v_an: msg.data.Voltage.A_N,
                 v_bn: msg.data.Voltage.B_N,
                 v_cn: msg.data.Voltage.C_N,
-                time: this.formatTimestamp,
+                time: this.formatTimestamp(),
             };
 
-            this.historyVoltage.unshift(newVoltEntry); // Add to the beginning of the array
+            this.historyVoltage.unshift(newVoltEntry);
             if (this.historyVoltage.length > this.maxHistory) {
-                this.historyVoltage.pop(); // Remove the oldest entry
+                this.historyVoltage.pop();
             }
-            // console.log(this.historyVoltage);
         },
 
         updateTableC(msg) {
@@ -115,51 +207,13 @@ document.addEventListener("alpine:init", () => {
                 c_a: msg.data.Current.A,
                 c_b: msg.data.Current.B,
                 c_c: msg.data.Current.C,
+                time: this.formatTimestamp(),
             };
 
-            this.historyCurrent.unshift(newCurrentEntry); // Add to the beginning of the array
+            this.historyCurrent.unshift(newCurrentEntry);
             if (this.historyCurrent.length > this.maxHistoryC) {
-                this.historyCurrent.pop(); // Remove the oldest entry
+                this.historyCurrent.pop();
             }
-            console.log(this.historyCurrent);
-        },
-
-        formatTimestamp() {
-            const date = new Date();
-
-            const daysOfWeek = [
-                "Sunday",
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday",
-            ];
-            const months = [
-                "January",
-                "February",
-                "March",
-                "April",
-                "May",
-                "June",
-                "July",
-                "August",
-                "September",
-                "October",
-                "November",
-                "December",
-            ];
-
-            const dayOfWeek = daysOfWeek[date.getDay()];
-            const day = date.getDate();
-            const month = months[date.getMonth()];
-            const year = date.getFullYear();
-            const hours = String(date.getHours()).padStart(2, "0");
-            const minutes = String(date.getMinutes()).padStart(2, "0");
-            const seconds = String(date.getSeconds()).padStart(2, "0");
-
-            return `${dayOfWeek}, ${month} ${day}, ${year} ${hours}:${minutes}:${seconds}`;
         },
 
         updateTableP(msg) {
@@ -167,14 +221,21 @@ document.addEventListener("alpine:init", () => {
                 p_a: msg.data.Power.A,
                 p_b: msg.data.Power.B,
                 p_c: msg.data.Power.C,
-                p_t: msg.data.Power.T,
+                p_t: msg.data.Power.T.toLocaleString("id-ID"),
+                time: this.formatTimestamp(),
             };
 
-            this.historyPower.unshift(newPowerEntry); // Add to the beginning of the array
+            this.historyPower.unshift(newPowerEntry);
             if (this.historyPower.length > this.maxHistoryP) {
-                this.historyPower.pop(); // Remove the oldest entry
+                this.historyPower.pop();
             }
-            console.log(`hEY ${this.historyPower}`);
+        },
+
+        destroy() {
+            if (this.client) {
+                this.client.end();
+                console.log("MQTT client disconnected");
+            }
         },
     }));
 });
